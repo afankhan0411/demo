@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+    environment {
+        name = 'afan'
+    }
+    parameters {
+        string(name: 'person', defaultValue: 'afan khan', description: "who are you?")
+        booleanParam(name: 'ISMALE', defaultValue: true , description: "")
+        choice(name: 'city', choices: ['Mumbai', 'pune'], description: "")
+    }
+    stages {
+        stage('env_var') {
+            steps {
+                sh 'echo "${name}"'
+            }
+        }
+        
+          stage('build') {
+              environment {
+                 username = 'khannnnn'
+    }
+            steps {
+               sh 'echo "${username}"'
+               sh 'echo "${person}"'
+            }
+        }
+        
+          stage('continue') {
+              input{
+                message "should we continue?"
+                ok "yes we should"
+              }
+            steps {
+                echo 'Hello World'
+            }
+        }
+        
+          stage('prod_deploy') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+    post{
+        always{
+            echo "this will rune always"
+        }
+        failure{
+            echo "this is a failure"
+        }
+        success{
+            echo "this is a success"
+        }
+        
+    }       
+}
