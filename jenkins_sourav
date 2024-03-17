@@ -1,56 +1,45 @@
 pipeline {
     agent any
-    environment {
-        name = 'afan'
+         tools {
+        maven 'Maven' 
     }
-    parameters {
-        string(name: 'person', defaultValue: 'afan khan', description: "who are you?")
-        booleanParam(name: 'ISMALE', defaultValue: true , description: "")
-        choice(name: 'city', choices: ['Mumbai', 'pune'], description: "")
-    }
+
     stages {
-        stage('env_var') {
+        stage('unittest') {
             steps {
-                sh 'echo "${name}"'
-            }
-        }
-        
-          stage('build') {
-              environment {
-                 username = 'khannnnn'
-    }
-            steps {
-               sh 'echo "${username}"'
-               sh 'echo "${person}"'
-            }
-        }
-        
-          stage('continue') {
-              input{
-                message "should we continue?"
-                ok "yes we should"
-              }
-            steps {
+                sh 'mvn test'
                 echo 'Hello World'
             }
         }
-        
-          stage('prod_deploy') {
+        stage('buid') {
             steps {
+                sh 'mvn install'
                 echo 'Hello World'
             }
         }
+        stage('deploy on test') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'test', path: '', url: 'http://13.233.153.145:8082')], contextPath: '/demo', war: '**/*.war'
+                echo 'Hello World'
+            }
+        }
+        stage('deploy on prod') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'prod', path: '', url: 'http://65.0.11.219:8081')], contextPath: '/prod', war: '**/*.war'
+                echo 'Hello World'
+            }
+        }    
     }
     post{
         always{
-            echo "this will rune always"
+            echo "this will always run"
         }
         failure{
-            echo "this is a failure"
+            echo "this wil fail"
         }
         success{
-            echo "this is a success"
+            echo "this will run on success"
+            
         }
-        
-    }       
+    }
 }
